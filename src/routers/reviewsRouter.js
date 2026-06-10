@@ -1,3 +1,4 @@
+
 import express from "express";
 import { index, show, create, modify, destroy } from '../controllers/reviewsController.js';
 import validateCreateReview from "../middlewares/validateCreateReview.js";
@@ -20,3 +21,4 @@ reviewsRouter.patch('/:id', modify)
 reviewsRouter.delete('/:id', destroy)
 
 export default reviewsRouter;
+
