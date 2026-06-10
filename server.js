@@ -10,7 +10,7 @@ const host = process.env.HOST || "localhost";
 app.use(express.json());
 app.use(express.static('public'));
 
-
+app.use('/products', productsRouters);
 
 app.listen(port, (error) => {
     if (error) {
