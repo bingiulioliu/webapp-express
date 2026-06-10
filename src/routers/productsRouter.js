@@ -1,29 +1,22 @@
 import express from "express";
-import { 
-    index,
-    show,
-    create,
-    modify,
-    destroy
-} from "../controllers/productsController.js";
 
-const router = express.Router();
+import { index, show, create, modify, destroy } from '../controllers/productsController.js';
 
-// INDEX http://localhost:3000/products
-router.get("/", index);
+const productRouter = express.Router();
+
+// INDEX hhtp://localhost:3000/products
+productRouter.get('/', index)
 
 // SHOW hhtp://localhost:5555/products/:id
-router.get('/:id', show);
+productRouter.get('/:id', show);
 
 // CREATE
-router.post('/', create)
+productRouter.post('/', create)
 
 // PATCH
-router.patch('/:id', modify)
+productRouter.patch('/:id', modify)
 
 // DELETE
-router.delete('/:id', destroy)
+productRouter.delete('/:id', destroy)
 
-
-export default router;
-
+export default productRouter;

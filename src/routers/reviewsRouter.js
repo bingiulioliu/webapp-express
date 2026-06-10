@@ -1,8 +1,24 @@
-import express from 'express';
-import { destroy } from '../controllers/reviewsController.js'; 
 
-const router = express.Router();
+import express from "express";
+import { index, show, create, modify, destroy } from '../controllers/reviewsController.js';
+import validateCreateReview from "../middlewares/validateCreateReview.js";
 
-router.delete('/:id', destroy);
+const reviewsRouter = express.Router();
 
-export default router;
+// INDEX hhtp://localhost:3000/products
+reviewsRouter.get('/', index)
+
+// SHOW hhtp://localhost:5555/products/:id
+reviewsRouter.get('/:id', show);
+
+// CREATE
+reviewsRouter.post('/',validateCreateReview, create);
+
+// PATCH
+reviewsRouter.patch('/:id', modify)
+
+// DELETE
+reviewsRouter.delete('/:id', destroy)
+
+export default reviewsRouter;
+

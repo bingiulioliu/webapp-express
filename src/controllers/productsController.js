@@ -1,3 +1,4 @@
+
 import connection from "../db/connections/connection.js";
 
 async function index(request, response) {
