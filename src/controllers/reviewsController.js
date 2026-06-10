@@ -18,10 +18,54 @@ async function index(request, response) {
 };
 
 async function show(request, response) {
+    
+    const {id} = request.params;
+
+    const query = `
+    select id, name, text_review, rating, title
+    from reviews r
+    where r.id = ?
+    `;
+    
     try{
+        const [rows] = await connection.execute(query, [id]);
 
-    }catch{
+        // se array è vuoto
+        if (rows.length === 0){
+            return response.status(404).json({
+                error: 'Recensione non trovata',
+                results: null
+            });
+        }
 
+        // se trovo la rece, la estraggo
+        const review = rows[0];
+
+        // query per il prodotto assogiato
+        const queryProduct =`
+            select p.name
+            from products p
+                join reviews r
+                    on p.id = r.product_id
+            where p.id = ?
+        `;
+
+        // assoccio
+        const [name] = await connection.execute(queryProduct, [id]);
+
+        review.name = name[0];
+
+        response.json({
+            error: null,
+            results: review
+        })
+
+    } catch(error) {
+        response.status(500).json({
+            error: 'È successo qualcosa',
+            results: null
+        });
+        console.log(error);
     }
 };
 
