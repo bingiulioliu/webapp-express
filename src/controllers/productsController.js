@@ -22,7 +22,7 @@ async function index(request, response) {
                 LEFT JOIN categories
                     ON category_product.category_id = categories.id
             GROUP BY products.id
-            ORDER BY products.id
+            ORDER BY created_at desc
     `;
 
         const [products] = await connection.query(sql);
@@ -127,12 +127,47 @@ async function create(request, response) {
 };
 
 async function destroy(request, response) {
-    try{
+    try {
+        const { id } = request.params;
 
-    }catch{
+        // Query per verificare se il prodotto esiste (con JOIN per vedere le categorie)
+        const sqlVerify = `
+            SELECT p.*
+            FROM products p
+            LEFT JOIN category_product cp 
+            ON p.id = cp.product_id
+            WHERE p.id = ?`;
 
+        const [products] = await connection.query(sqlVerify, [id]);
+
+        // Validazione array vuoto
+        if (products.length === 0) {
+            return response.status(404).json({
+                error: "Not Found",
+                message: "Prodotto non trovato",
+            });
+        }
+
+        // Query eliminazione prodotti e relazioni con categorie
+        const sqlDelete = `
+            DELETE p, cp FROM products p
+            INNER JOIN category_product cp 
+            ON p.id = cp.product_id
+            WHERE p.id = ?`;
+
+        await connection.query(sqlDelete, [id]);
+
+        response.sendStatus(204);
+
+    } catch (error) {
+        console.error(error);
+
+        response.status(500).json({
+            error: "Internal Server Error",
+            message: "Errore durante l'eliminazione del prodotto",
+        });
     }
-};
+}
 
 async function modify(request, response) {
     try{
