@@ -104,7 +104,16 @@ async function modify(request, response) {
 
 async function destroy(request, response) {
     try {
-        
+        const { id } = request.params;
+
+// Query per verificare se la recensione esiste
+        const sqlVerify = `
+            SELECT *
+            FROM reviews 
+            WHERE id = ?`;
+
+        const [reviews] = await connection.query(sqlVerify, [id]);
+
 // Validazione nel caso l'array delle recensioni sia vuoto
         if (reviews.length === 0) {
             response.status(404).json({
@@ -116,9 +125,9 @@ async function destroy(request, response) {
 // Query di eliminazione
         const sqlDelete = `
             DELETE FROM reviews 
-            WHERE id = ${id}`;
+            WHERE id = ?`;
 
-        await connection.query(sqlDelete);
+        await connection.query(sqlDelete, [id]);
 
         response.sendStatus(204);
 
