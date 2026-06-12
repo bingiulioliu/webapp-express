@@ -20,3 +20,22 @@ export async function avgReviews(productId) {
         `, [productId]);
     return rows[0].average_rating ? Math.round(parseFloat(rows[0].average_rating)) : 0;
 };
+
+
+// Recensioni per prodotto
+export async function getReviewsByProduct(productId) {
+    const query = `
+        select id, name, title, text_review, rating
+        from reviews
+        where product_id = ?
+        order by rating desc
+        limit 5
+    `;
+
+    const [rows] = await connection.execute(query, [productId]);
+
+    return rows.map(review => ({
+        ...review,
+        rating: Number(review.rating)
+    }));
+};

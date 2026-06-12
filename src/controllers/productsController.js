@@ -1,6 +1,6 @@
 
 import connection from "../db/connections/connection.js";
-import { avgReviews, countReviews } from "../utils/reviewsQueries.js";
+import { avgReviews, countReviews, getReviewsByProduct } from "../utils/reviewsQueries.js";
 
 async function showLatest(request, response) {
     const query = `SELECT products.*,
@@ -14,7 +14,7 @@ async function showLatest(request, response) {
                     ORDER BY created_at desc
                     LIMIT 5;`
 
-     try {
+    try {
 
         const [products] = await connection.execute(query);
 
@@ -149,13 +149,15 @@ async function show(request, response) {
 
         const total_reviews = await countReviews(id);
         const average_rating = await avgReviews(id);
+        const reviews = await getReviewsByProduct(id);
 
         response.json({
             error: null,
             results: {...product,
                 price: Number(product.price),
                 total_reviews,
-                average_rating
+                average_rating,
+                reviews
             }
         })
 
