@@ -2,6 +2,40 @@
 import connection from "../db/connections/connection.js";
 import { avgReviews, countReviews } from "../utils/reviewsQueries.js";
 
+async function showLatest(request, response) {
+    const query = `SELECT products.*,
+                    GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories
+                    FROM products
+                    LEFT JOIN category_product
+                    ON products.id = category_product.product_id
+                    LEFT JOIN categories
+                    ON category_product.category_id = categories.id
+                    GROUP BY products.id
+                    ORDER BY created_at desc
+                    LIMIT 5;`
+
+     try {
+
+        const [products] = await connection.execute(query);
+
+        response.json({
+            data: products.map(product => {
+                const x = Number(product.price);
+                return {...product,
+                    price: x
+                }
+            })
+        });
+    } catch (error) {
+        console.error(error);
+
+        response.status(500).json({
+            error: "Internal Server Error",
+            message: "Errore durante il recupero dei prodotti",
+        });
+    }               
+}
+
 async function index(request, response) {
     try {
         const sql = `
@@ -183,4 +217,4 @@ async function modify(request, response) {
     }
 };
 
-export {index, show, create, destroy, modify};
+export {index, show, create, destroy, modify, showLatest};
