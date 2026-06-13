@@ -88,7 +88,7 @@ async function index(request, response) {
                 ORDER BY created_at desc
             `;
             searchValue = [search];
-        }
+        };
 
         const [products] = await connection.query(sql, searchValue);
 
@@ -109,7 +109,7 @@ async function index(request, response) {
             message: "Errore durante il recupero dei prodotti",
         });
     }
-}
+};
 
 async function show(request, response) {
 
