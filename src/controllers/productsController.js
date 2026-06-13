@@ -18,14 +18,22 @@ async function showLatest(request, response) {
 
         const [products] = await connection.execute(query);
 
-        response.json({
-            data: products.map(product => {
-                const x = Number(product.price);
-                return {...product,
-                    price: x
-                }
+        const productsWithRating = await Promise.all(
+        products.map(async (product) => {
+            const averageRating = await avgReviews(product.id);
+
+            return{
+                ...product,
+                price: Number(product.price),
+                average_rating: averageRating ? averageRating : null
+                };
             })
+        );
+
+        response.json({
+            data: productsWithRating
         });
+        
     } catch (error) {
         console.error(error);
 
@@ -34,7 +42,7 @@ async function showLatest(request, response) {
             message: "Errore durante il recupero dei prodotti",
         });
     }               
-}
+};
 
 async function index(request, response) {
     try {
