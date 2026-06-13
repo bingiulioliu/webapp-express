@@ -92,14 +92,21 @@ async function index(request, response) {
 
         const [products] = await connection.query(sql, searchValue);
 
-        response.json({
-            data: products.map(product => {
-                const x = Number(product.price);
+        const productsWithRating = await Promise.all(
+            products.map(async (product) => {
+                // recupero la media
+                const averageRating = await avgReviews(product.id);
+
                 return {
                     ...product,
-                    price: x
-                }
+                    price: Number(product.price),
+                    average_rating: averageRating ? averageRating : null
+                };
             })
+        );
+
+        response.json({
+            data: productsWithRating
         });
     } catch (error) {
         console.error(error);
