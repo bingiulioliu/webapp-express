@@ -91,7 +91,7 @@ async function index(request, response) {
                         ON products.id = category_product.product_id
                     LEFT JOIN categories
                         ON category_product.category_id = categories.id
-                WHERE products.name = ?
+                WHERE products.name LIKE concat('%', ? '%')
                 GROUP BY products.id
                 ORDER BY created_at desc
             `;
