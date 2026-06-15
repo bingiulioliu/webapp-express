@@ -61,7 +61,7 @@ async function index(request, response) {
                 products.ingredient,
                 products.image,
                 products.created_at,
-                products.updated_at,
+                products.updated_at
             GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories
             FROM products
                 LEFT JOIN category_product
@@ -84,7 +84,7 @@ async function index(request, response) {
                     products.ingredient,
                     products.image,
                     products.created_at,
-                    products.updated_at,
+                    products.updated_at
                 GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories
                 FROM products
                     LEFT JOIN category_product
