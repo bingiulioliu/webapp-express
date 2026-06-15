@@ -19,13 +19,13 @@ async function showLatest(request, response) {
         const [products] = await connection.execute(query);
 
         const productsWithRating = await Promise.all(
-        products.map(async (product) => {
-            const averageRating = await avgReviews(product.id);
+            products.map(async (product) => {
+                const averageRating = await avgReviews(product.id);
 
-            return{
-                ...product,
-                price: Number(product.price),
-                average_rating: averageRating ? averageRating : null
+                return {
+                    ...product,
+                    price: Number(product.price),
+                    average_rating: averageRating ? averageRating : null
                 };
             })
         );
@@ -33,7 +33,7 @@ async function showLatest(request, response) {
         response.json({
             data: productsWithRating
         });
-        
+
     } catch (error) {
         console.error(error);
 
@@ -41,13 +41,19 @@ async function showLatest(request, response) {
             error: "Internal Server Error",
             message: "Errore durante il recupero dei prodotti",
         });
-    }               
+    }
 };
 
-async function index(request, response) {
+async function index(request, response, next) {
     try {
         const { search } = request.query;
+
+        const page = parseInt(request.query.page) || 1;
+        const limit = parseInt(request.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
         let sql;
+        let countSql;
         let searchValue = [];
 
         sql = `
@@ -61,7 +67,7 @@ async function index(request, response) {
                 products.ingredient,
                 products.image,
                 products.created_at,
-                products.updated_at
+                products.updated_at,
             GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories
             FROM products
                 LEFT JOIN category_product
@@ -70,7 +76,15 @@ async function index(request, response) {
                     ON category_product.category_id = categories.id
             GROUP BY products.id
             ORDER BY created_at desc
+            LIMIT ? OFFSET ?
     `;
+
+        countSql = `
+            SELECT COUNT(*) AS total
+            FROM products
+        `;
+
+        searchValue = [limit, offset];
 
         if (search) {
             sql = `
@@ -84,21 +98,40 @@ async function index(request, response) {
                     products.ingredient,
                     products.image,
                     products.created_at,
-                    products.updated_at
+                    products.updated_at,
                 GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories
                 FROM products
                     LEFT JOIN category_product
                         ON products.id = category_product.product_id
                     LEFT JOIN categories
                         ON category_product.category_id = categories.id
-                WHERE products.name LIKE concat('%', ? '%')
+                WHERE products.name LIKE concat('%', ?, '%')
                 GROUP BY products.id
                 ORDER BY created_at desc
+                LIMIT ? OFFSET ?
             `;
-            searchValue = [search];
+
+            countSql = `
+                SELECT COUNT(*) AS total
+                FROM products
+                WHERE products.name LIKE concat('%', ?, '%')
+            `;
+
+            searchValue = [search, limit, offset];
         };
 
         const [products] = await connection.query(sql, searchValue);
+
+        let countValue = [];
+
+        if (search) {
+            countValue = [search];
+        }
+
+        const [[countResult]] = await connection.query(countSql, countValue);
+
+        const totalProducts = countResult.total;
+        const totalPages = Math.ceil(totalProducts / limit);
 
         const productsWithRating = await Promise.all(
             products.map(async (product) => {
@@ -114,7 +147,13 @@ async function index(request, response) {
         );
 
         response.json({
-            data: productsWithRating
+            data: productsWithRating,
+            pagination: {
+                page,
+                limit,
+                totalProducts,
+                totalPages
+            }
         });
     } catch (error) {
         console.error(error);
@@ -168,7 +207,8 @@ async function show(request, response) {
 
         response.json({
             error: null,
-            results: {...product,
+            results: {
+                ...product,
                 price: Number(product.price),
                 total_reviews,
                 average_rating,
@@ -258,11 +298,11 @@ async function destroy(request, response) {
 }
 
 async function modify(request, response) {
-    try{
+    try {
 
-    }catch{
+    } catch {
 
     }
 };
 
-export {index, show, create, destroy, modify, showLatest};
+export { index, show, create, destroy, modify, showLatest };
