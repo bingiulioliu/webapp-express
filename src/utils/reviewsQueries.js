@@ -25,7 +25,7 @@ export async function avgReviews(productId) {
 // Recensioni per prodotto
 export async function getReviewsByProduct(productId) {
     const query = `
-        select id, name, title, text_review, rating
+        select id, name, title, text_review, rating, created_at
         from reviews
         where product_id = ?
         order by rating desc
