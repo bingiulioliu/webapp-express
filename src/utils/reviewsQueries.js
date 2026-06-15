@@ -18,7 +18,7 @@ export async function avgReviews(productId) {
         from reviews
         where product_id = ?;
         `, [productId]);
-    return rows[0].average_rating ? Math.round(parseFloat(rows[0].average_rating)) : 0;
+    return rows[0].average_rating ? parseFloat(rows[0].average_rating).toFixed(1) : 0;
 };
 
 
