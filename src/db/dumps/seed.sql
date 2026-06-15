@@ -270,6 +270,11 @@ INSERT INTO `reviews` (`product_id`, `name`, `text_review`, `rating`, `title`) V
 (20, 'Sisto_P20_10', 'Manca un po di sale, ma basta aggiungerlo.', '4', 'Da regolare di sale');
 
 
+-- Aggiungo la colonna created_at per avere la data
+ALTER TABLE `reviews` 
+ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+
 -- Popolazione category_product
 INSERT INTO category_product (product_id, category_id) VALUES
 -- Categoria 1: Novità (Prodotti 1, 3, 17, 20)
