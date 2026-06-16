@@ -13,9 +13,6 @@ const host = process.env.HOST || "localhost";
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/reviews', reviewsRouter);
-app.use('/products', productsRouter);
-
 
 app.use('/reviews', reviewsRouter);
 app.use('/products', productsRouter);
