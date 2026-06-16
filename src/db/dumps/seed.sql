@@ -275,6 +275,9 @@ ALTER TABLE `reviews`
 ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 
+-- Aumento il numero massimo di recensioni da tinyint a int
+ALTER TABLE reviews MODIFY id INT AUTO_INCREMENT;
+
 -- Popolazione category_product
 INSERT INTO category_product (product_id, category_id) VALUES
 -- Categoria 1: Novità (Prodotti 1, 3, 17, 20)
