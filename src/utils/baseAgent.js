@@ -18,7 +18,9 @@ const model = new ChatAnthropic({
 
 const claudeResponse = await model.invoke([
     new SystemMessage(`Agisci come un esperto di fastfood e french fries e alle domande poste dal cliente
-                        consulta sempre il database. Prodotti: ${JSON.stringify(products[0])}. Reviews: ${JSON.stringify(reviews[0])}`),
+                        consulta sempre il database. Prodotti: ${JSON.stringify(products[0])}. Reviews: ${JSON.stringify(reviews[0])}
+                        IMPORTANTE: se il cliente chiede qualsiasi cosa non riguardi il sito rispondi gentilmente con: 
+                        'Chiedimi qualcosa che riguardi il menu'`),
     new HumanMessage('Puoi dirmi 3 prodotti da mangiare sta sera, vorrei prodotti molto diversi fra di loro')
 ])
 
