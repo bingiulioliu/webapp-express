@@ -3,6 +3,7 @@ import reviewsRouter from './src/routers/reviewsRouter.js';
 import categoriesRouter from './src/routers/categoriesRouter.js';
 import productsRouter from './src/routers/productsRouter.js';
 import cors from 'cors';
+import agentRouter from './src/routers/agentRouter.js';
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.static('public'));
 app.use('/reviews', reviewsRouter);
 app.use('/products', productsRouter);
 app.use('/categories', categoriesRouter);
+app.use('/agent', agentRouter);
 
 app.listen(port, (error) => {
     if (error) {
