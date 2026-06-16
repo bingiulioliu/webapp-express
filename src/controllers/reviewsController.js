@@ -2,6 +2,7 @@
 import connection from "../db/connections/connection.js";
 
 async function index(request, response) {
+
     try{
         const [rows] = await connection.query('select id, name, text_review, rating, title from reviews');
 
@@ -77,27 +78,30 @@ async function show(request, response) {
 
 async function create(request, response) {
     
-//     connection.execute(`INSERT INTO reviews (product_id, name, text_review, rating, title) 
-// VALUES ('valore1', 'valore2');`)
-    const newReviewName = request.newReviewName;
-    const newReviewProductId = request.newReviewProductId;
-    const newTextReview = request.newTextReview;
-    const newReviewRating = request.newReviewRating;
-    const newReviewTitle = request.newReviewTitle;
-    
+    const { product_id, name, title, rating, text_review } = request.body;
+
     try {
-        await connection.execute(`INSERT INTO reviews (product_id, name, text_review, rating, title)
-            VALUES ('${newReviewProductId}', '${newReviewName}', '${newTextReview}', '${newReviewRating}', '${newReviewTitle}');`)
+        const sql = `
+        INSERT INTO reviews (product_id, name, title, rating, text_review) 
+        VALUES (?, ?, ?, ?, ?)`;
+
+        await connection.execute(sql, [product_id, name, title, rating, text_review]);
+
+        return response.status(200).json({
+            success: true,
+            message: 'Recensione inserita con successo!'
+        });
+
     } catch (error) {
-        throw error;
+        console.error(error);
+
+        // 4. Se il database fallisce, rispondiamo al frontend senza far crashare il server
+        return response.status(500).json({
+            error: "Impossibile salvare la recensione..."
+        });
     }
-    
-    
-    response.status(200).json({
-        success: true
-    })
-    return;
-};
+}
+
 
 async function modify(request, response) {
     try{

@@ -1,18 +1,18 @@
 
 import express from "express";
 import { index, show, create, modify, destroy } from '../controllers/reviewsController.js';
-import validateCreateReview from "../middlewares/validateCreateReview.js";
+import validationCreateReview from "../middlewares/validationCreateReview.js";
 
 const reviewsRouter = express.Router();
 
-// INDEX hhtp://localhost:3000/products
+// INDEX 
 reviewsRouter.get('/', index)
 
-// SHOW hhtp://localhost:5555/products/:id
+// SHOW 
 reviewsRouter.get('/:id', show);
 
 // CREATE
-reviewsRouter.post('/',validateCreateReview, create);
+reviewsRouter.post('/',validationCreateReview, create);
 
 // PATCH
 reviewsRouter.patch('/:id', modify)
