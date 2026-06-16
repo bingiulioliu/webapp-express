@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node --env-file=.env server.js",
-    "watch": "node --watch --env-file=.env server.js"
+    "watch": "node --watch --env-file=.env server.js",
+    "chat": "node --watch --env-file=.env src/agents/agentCall.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "langchain": "^1.4.5",
-    "mysql2": "^3.22.5"
+    "mysql2": "^3.22.5",
+    "zod": "^4.4.3"
   }
 }
